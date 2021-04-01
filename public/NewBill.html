@@ -1,0 +1,213 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/ejs@3.1.6/ejs.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      let count = 0;
+      let items = [];
+      let template = "";
+
+      window.addEventListener("load", () => {
+        $.get(`CreateNewItem.html`).done((res) => {
+          template = res;
+        });
+        countNumberOfItems();
+      });
+
+      async function renderTemplate(data) {
+        let list = document.getElementById("billList");
+        let anotherCard = document.createElement("div");
+        anotherCard.id = `${count}id`;
+        anotherCard.innerHTML += ejs.render(template, data);
+        billList.appendChild(anotherCard);
+        window.scrollTo({
+          left: 0,
+          top: document.body.scrollHeight,
+          behavior: "smooth"
+        });
+      }
+
+      const countNumberOfItems = async () => {
+        setInterval(() => {
+          let f = document.querySelector("#noOfItems");
+          f.innerHTML = items.length;
+        }, 200);
+      };
+
+      const cal = (id) => {
+        let rate = Number(
+          document.querySelector(`#Item${id} #rateValue`).value
+        );
+
+        let Weight = Number(
+          document.querySelector(`#Item${id} #weightValue`).value
+        );
+
+        let mcValue = Number(
+          document.querySelector(`#Item${id} #mcValue`).value
+        );
+        const re = rate * (!Weight ? 1 : Weight) + (!mcValue ? 0 : mcValue);
+        let pricePara = document.querySelector(`#Item${id} #priceValue`);
+        pricePara.innerHTML = "$" + re;
+        return re;
+      };
+
+      const includeMC = (id) => {
+        let chb = document.querySelector(`#Item${id} #chkIncludeMC${id}`);
+        let pricePara = document.querySelector(`#Item${id} #priceValue`);
+        let mcValue = Number(
+          document.querySelector(`#Item${id} #mcValue`).value
+        );
+        if (chb.checked == false) {
+          let nowvalue = cal(id) - mcValue;
+          pricePara.innerHTML = "$" + nowvalue;
+          pricePara.classList.add("bg-yellow-100");
+          pricePara.classList.remove("bg-green-100");
+        } else {
+          let nowvalue = cal(id);
+          pricePara.innerHTML = "$" + nowvalue;
+          pricePara.classList.remove("bg-yellow-500");
+          pricePara.classList.add("bg-green-100");
+        }
+      };
+
+      function includeItemGST() {}
+
+      const onTypeChange = async (id) => {
+        let valuefromselection = document.querySelector(`#Item${id} #etype`)
+          .value;
+        await axios.get("/price/today").then((doc) => {
+          switch (valuefromselection) {
+            case "Gold": {
+              document.querySelector(`#Item${id} #rateValue`).value =
+                doc.data.gold;
+              break;
+            }
+            case "Silver": {
+              document.querySelector(`#Item${id} #rateValue`).value =
+                doc.data.silver;
+              break;
+            }
+          }
+        });
+      };
+
+      const removeH = (id) => {
+        let getItms = document.getElementById(`${id}id`);
+        getItms.remove();
+        let idlocation = items.find((id) => id === this.id);
+        items.splice(idlocation, 1);
+      };
+
+      async function addMore() {
+        count++;
+        items.push(count);
+        await renderTemplate({ count: count });
+      }
+
+      function scrollToId() {
+        let idvalue = Number(document.getElementById("gotofield").value);
+        let id = !idvalue ? 1 : idvalue;
+        let node = document.getElementById(`${id}id`);
+        node.scrollIntoView({
+          behavior: "smooth"
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="#top" class="px-5 py-5 mb-20 mt-5">
+      <h2 class="text-2xl text-green-600 font-normal">
+        Make New Bill
+      </h2>
+      <h4 class="mt-7 text-base">Enter Details</h4>
+      <div class="mt-2 md:w-1/2">
+        <div class="mb-2 pt-0">
+          <input
+            type="text"
+            placeholder="Customer name"
+            class="px-2 py-2 mt-1 placeholder-gray-400 text-gray-700 bg-white rounded text-sm border border-gray-400 outline-none focus:outline-none focus:shadow-outline w-full md:w-full uppercase"
+          />
+          <div class="mt-2 flex gap-1">
+            <input
+              type="number"
+              placeholder="Contact"
+              class="px-2 py-2 mt-1 placeholder-gray-400 text-gray-700 bg-white rounded text-sm border border-gray-400 outline-none focus:outline-none focus:shadow-outline w-1/2 uppercase"
+            />
+            <input
+              type="number"
+              placeholder="ID"
+              class="px-2 py-2 mt-1 placeholder-gray-400 text-gray-700 bg-white rounded text-sm border border-gray-400 outline-none focus:outline-none focus:shadow-outline w-1/2 uppercase"
+            />
+          </div>
+          <input
+            type="button"
+            class="block font-bold mt-2 py-2 px-6 bg-green-600 hover:bg-green-500 rounded outline-none text-white"
+            value="FIND"
+          />
+        </div>
+      </div>
+      <h4 class="text-start text-lg text-green-600 mb-3 mt-8 uppercase">
+        Items
+      </h4>
+      <div
+        id="billList"
+        class="grid grid-cols-1 md:grid-cols-2 md:gap-4 lg:grid-cols-3"
+      ></div>
+      <div class="flex justify-between mt-5">
+        <div class="flex flex-row gap-1">
+          <input
+            type="number"
+            id="gotofield"
+            placeholder="Go To (de: top)"
+            class="px-4 py-2 placeholder-gray-400 text-gray-700 bg-white rounded text-sm border border-gray-400 outline-none focus:outline-none focus:shadow-outline w-3/5"
+          />
+          <input
+            type="button"
+            id="TopScroll"
+            value="Go"
+            onclick="scrollToId()"
+            class="text-green-600 bg-transparent border border-solid border-green-600 hover:bg-green-500 hover:text-white px-4 py-2 rounded outline-none focus:outline-none"
+          />
+        </div>
+
+        <input
+          id="btnAddMoreItems"
+          value="Add+"
+          class="text-green-600 bg-transparent border border-solid border-green-600 hover:bg-green-500 hover:text-white px-4 py-2 rounded outline-none focus:outline-none"
+          type="button"
+          onclick="addMore()"
+        />
+      </div>
+    </div>
+    <!--Header-->
+    <div
+      class="text-xl fixed flex flex-col left-0 right-0 bottom-0 bg-green-800 py-3 px-5 gap-1"
+    >
+      <!--First Row-->
+      <div class="text-white flex justify-between">
+        <p>
+          Final : 16000
+          <span class="text-yellow-200">(i. gst)</span>
+        </p>
+        <div class="p-0">
+          <input id="chkIncludeGSt" type="checkbox" />
+          <label for="chkIncludeGSt">With Gst</label>
+        </div>
+      </div>
+      <!--Second Row-->
+      <div class="flex justify-between">
+        <p class="text-white">Items : <span id="noOfItems">1</span></p>
+      </div>
+    </div>
+  </body>
+</html>

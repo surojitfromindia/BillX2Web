@@ -1,0 +1,106 @@
+<div id="Item<%= count %>" class="my-2 pl-2 shadow pr-4 py-3 border rounded bg-white">
+  <h4 class="text-xl">Item <%= count %></h4>
+  <div class="flex mt-2 justify-between items-center gap-5">
+    <input
+      class="px-2 py-2 mt-1 w-full 
+      placeholder-gray-400 text-gray-700 bg-white
+       rounded text-sm border border-gray-400 
+       focus:outline-none focus:ring  uppercase"
+      placeholder="Enter Item Name"
+      type="text"
+    />
+    <p
+      id="priceValue"
+      class="items-center text-green-900 bg-green-100 px-3 h-auto rounded-full"
+    >
+      $0
+    </p>
+  </div>
+  <!--Second Row-->
+  <div class="flex gap-1 mt-2">
+    <input
+      id="rateValue"
+      class="px-2 py-2 mt-1 w-1/3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm border border-gray-400 focus:outline-none focus:ring  uppercase"
+      placeholder="rate"
+      type="number"
+    />
+    <select
+      id="etype"
+      onchange="onTypeChange(<%= count %>)"
+      class=" px-2 py-2 mt-1 w-1/3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm border border-gray-400 focus:outline-none focus:ring"
+    >
+      <option value="" selected disabled hidden>C.T</option>
+      <option value="Gold">Gold</option>
+      <option value="Silver">Silver (gm)</option>
+      <option value="Other">Other</option>
+      <option value="Make">Repair</option>
+    </select>
+    <input
+      id="weightValue"
+      class=" px-2 py-2 mt-1 w-1/3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm border border-gray-400 focus:outline-none focus:ring uppercase"
+      placeholder="Weight"
+      type="number"
+    />
+    <select
+      id="wtype"
+      class=" px-2 py-2 mt-1 w-1/4 placeholder-gray-400 text-gray-700 bg-white rounded text-sm
+       border border-gray-400 focus:outline-none focus:ring"
+    >
+      <option value="" selected disabled hidden>C.A</option>
+      <option value="Gold">gm</option>
+      <option value="Silver">mg</option>
+    </select>
+  </div>
+  <!--Third Row-->
+  <div class="flex items-center gap-1 mt-2">
+    <input
+      id="mcValue"
+      class="px-2 py-2 w-1/4 placeholder-gray-400 text-gray-700 bg-white rounded text-sm border border-gray-400 focus:outline-none focus:ring uppercase"
+      placeholder="M.C"
+      type="number"
+    />
+    <div class="text-sm ml-2 flex w-1/4 items-center">
+      <input
+        id="chkIncludeMC<%= count %>"
+        type="checkbox"
+        checked
+        onchange="includeMC(<%= count %>)"
+      />
+      <label for="chkIncludeMC<%= count %>" class="ml-1">include M.C</label>
+    </div>
+    <input
+      id="gstValue"
+      class="px-2 py-2 w-1/4 placeholder-gray-400 text-gray-700 bg-white rounded 
+      text-sm border border-gray-400 focus:outline-none focus:ring uppercase"
+      placeholder="GST"
+      type="number"
+    />
+    <div class="text-sm ml-2 w-1/4 flex items-center">
+      <input id="chkIncludeGSTitem<%= count %>" type="checkbox" checked />
+      <label for="chkIncludeGSTitem<%= count %>" class="ml-1"
+        >include GST</label
+      >
+    </div>
+  </div>
+  <div class="flex gap-1 mt-4 justify-end">
+    <input
+      onclick="cal(<%= count %>)"
+      id="btnCalculate"
+      type="button"
+      value="Calculate"
+      class="py-2 px-4 bg-green-500 text-white 
+      font-semibold rounded-md shadow-md hover:bg-green-700 
+      focus:outline-none focus:bg-green-500 focus:ring-2 focus:ring-green-500 
+      focus:ring-offset-2 focus:ring-opacity-75"
+    />
+    <input
+      onClick="removeH(<%= count %>)"
+      id="btnRemove"
+      value="Remove"
+      class="font-bold text-green-500 bg-transparent
+       border border-solid border-green-500 hover:border-green-700 hover:bg-green-700 hover:text-white
+        px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+      type="button"
+    />
+  </div>
+</div>

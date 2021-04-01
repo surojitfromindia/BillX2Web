@@ -1,0 +1,117 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="//fonts.googleapis.com/css?family=Raleway:400,300,600"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"
+    />
+    <style>
+      .container {
+        margin-top: 30px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function back() {
+        window.history.back();
+      }
+
+      function saveData() {
+        let cname = document
+          .getElementById("inputCustomeName")
+          .value.toUpperCase();
+        let date = new Date();
+        let cid =
+          date.getFullYear() +
+          "." +
+          date.getMonth() +
+          "." +
+          date.getDate() +
+          "." +
+          date.getHours() +
+          "." +
+          date.getMinutes() +
+          "." +
+          cname.slice(cname.length - 1, cname.length);
+
+        let csurname = document
+          .getElementById("inputSurname")
+          .value.toUpperCase();
+        let cage = document.getElementById("inputAge").value;
+        let cgender = document
+          .querySelector('input[name="gender"]:checked')
+          .value.toUpperCase();
+
+        data = {
+          cid: cid,
+          cname: cname,
+          csurname: csurname,
+          cage: cage,
+          cgender: cgender
+        };
+
+        if (data.cid != "") {
+          axios.post("/customer/edit/save", data).then((res) => {
+            let keyid = `User Registered with id : ${res.data.cid}`;
+            document.getElementById("message").innerHTML += keyid;
+          });
+        } else {
+          let keyid = `fields can't be null`;
+          document.getElementById("message").innerHTML = keyid;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h3>Register Customer</h3>
+      <form>
+        <div>
+          <label for="inputCustomeName">Name</label>
+
+          <input type="text" id="inputCustomeName" required />
+
+          <label for="inputSurname">Surname</label>
+
+          <input type="text" id="inputSurname" required />
+
+          <label for="inputAge">Age</label>
+
+          <input type="number" id="inputAge" required />
+        </div>
+
+        <div>
+          <label>Select Gender</label>
+          <label>
+            <input type="radio" id="sexMale" name="gender" value="Male" />
+            <span class="label-body">Male</span>
+          </label>
+          <label>
+            <input type="radio" id="sexFemale" name="gender" value="Female" />
+            <span class="label-body">Female</span>
+          </label>
+          <label>
+            <input type="radio" id="sexOther" name="gender" value="Other" />
+            <span class="label-body">Others</span>
+          </label>
+        </div>
+        <input
+          class="button-primary"
+          id="btnRegister"
+          type="button"
+          value="Register"
+          onclick="saveData()"
+        />
+        <input type="button" value="Back" onclick="back()" />
+        <div>
+          <h4 id="message"></h4>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
